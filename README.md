@@ -1,2 +1,3 @@
-# erato-cms
+# Erato CMS
+
 Erato CMS
