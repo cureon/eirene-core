@@ -1,3 +1,3 @@
-# Erato CMS
+# erato CMS
 
-Erato CMS
+erato CMS
