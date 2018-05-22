@@ -1,3 +1,5 @@
+![alt text](https://raw.githubusercontent.com/SharkeyO/EireneCMS/master/EireneCMS.png)
+
 # Eirene CMS
 
 Eirene CMS
