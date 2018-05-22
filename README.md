@@ -1,6 +1,6 @@
-# erato CMS
+# Eirene CMS
 
-erato CMS
+Eirene CMS
 
 ## TODO:
 
