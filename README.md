@@ -1,8 +1,6 @@
 ![alt text](https://raw.githubusercontent.com/SharkeyO/EireneCMS/master/EireneCMS.png)
 
-# Eirene CMS
-
-Eirene CMS
+__eirine__ is a flat-file, nodejs-based Content Management System (CMS) that is developed and maintained as open-source project. We chose KOA in TypeScript as development framework to make __eirene__ lightning fast.
 
 ## TODO:
 
@@ -12,3 +10,4 @@ Eirene CMS
 - Add example project
 - Add user/roles & auth-extensions
 - Add alternate data sources (db & api)
+- Add futher template engines
