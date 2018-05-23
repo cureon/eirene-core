@@ -1,0 +1,12 @@
+{
+    "pages": {
+        "index" : {
+            "content"  : "index",
+            "template" : "standard"
+        },
+        "about" : {
+            "content"  : "about",
+            "template" : "standard"
+        }
+    }
+}
