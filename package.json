@@ -12,6 +12,7 @@
   "author": "André Kirchner <andre.kirchner@cureon.de>",
   "license": "MIT",
   "dependencies": {
+    "bootstrap": "^4.0.0-alpha.6",
     "jstransformer-markdown-it": "^2.1.0",
     "koa": "^2.5.1",
     "koa-router": "^7.4.0",
