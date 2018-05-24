@@ -1,6 +1,6 @@
 {
   "name": "eirene-core",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "eirene CMS :: Content Management System",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch-server": "nodemon --watch 'src/**/*' -e ts,tsx --exec 'npm start'"
   },
-  "author": "André Kirchner",
+  "author": "André Kirchner <andre.kirchner@cureon.de>",
   "license": "MIT",
   "dependencies": {
     "jstransformer-markdown-it": "^2.1.0",
