@@ -11,13 +11,13 @@ const app            = new Koa();
 const router         = new Router();
 
 const staticFolder   = __dirname + '/static';
-const configFile     = __dirname + '/config/config.json';
+const routeFile      = __dirname + '/config/routes.json';
 const contentFolder  = __dirname + '/content';
 const templateFolder = __dirname + '/templates';
 const pipesFolder    = __dirname + '/pipes';
 
 // Load config
-const config = JSON.parse(fs.readFileSync(configFile).toString());
+const routes = JSON.parse(fs.readFileSync(routeFile).toString());
 
 // Serve static content from static folder
 app.use(serve(staticFolder));
@@ -28,8 +28,8 @@ app.use(views(templateFolder, {
 }));
 
 // Prepare routes
-Object.keys(config.pages).forEach((key) => {
-    const routeConfig = config.pages[key];
+Object.keys(routes.pages).forEach((key) => {
+    const routeConfig = routes.pages[key];
     
     if (routeConfig.content && routeConfig.template) {
         router.get('/' + (routeConfig.content == 'index' ? '' : routeConfig.content), async (ctx) => {
