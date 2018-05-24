@@ -4,17 +4,17 @@ import * as serve from 'koa-static';
 import * as views from 'koa-views';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as showdown from 'showdown';
+
 
 // Instantiate APP
 const app            = new Koa();
 const router         = new Router();
-const converter      = new showdown.Converter();
 
 const staticFolder   = __dirname + '/static';
 const configFile     = __dirname + '/config/config.json';
 const contentFolder  = __dirname + '/content';
 const templateFolder = __dirname + '/templates';
+const pipesFolder    = __dirname + '/pipes';
 
 // Load config
 const config = JSON.parse(fs.readFileSync(configFile).toString());
@@ -24,15 +24,7 @@ app.use(serve(staticFolder));
 
 // Register Template Engine
 app.use(views(templateFolder, {
-    extension: 'pug',
-    options: {
-        filters: {
-            content: function (block: any) {
-                return 'some string';
-            }
-        }
-    },
-    map: { pug: 'pug' }
+    extension: 'pug', map: { pug: 'pug' }
 }));
 
 // Prepare routes
@@ -61,7 +53,7 @@ function renderContent(file: any) {
             } else {
                 let objData: any = {};
 
-                if(data) {
+                if (data) {
                     data
                         .split('---')
                         .forEach((pair) => {
@@ -72,10 +64,12 @@ function renderContent(file: any) {
                             const pipe    = arrKey[1];
                             const value   = arrPair[1];
                             
+                            // Create JSON from txt and add pipes
                             if (key && value) {
                                 if (pipe) {
-                                    // TODO: Import external functions and filters
-                                    console.log('PIPE CALLED');
+                                    import(pipesFolder + '/' + pipe + '/' + pipe).then((pipeFnct) => {
+                                        objData[key] = pipeFnct[pipe](value);
+                                    });
                                 } else {
                                     objData[key] = value;
                                 }                                
