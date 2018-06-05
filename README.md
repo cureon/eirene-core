@@ -1,6 +1,6 @@
 ![alt text](https://raw.githubusercontent.com/SharkeyO/eirene-core/master/eireneCMS.png)
 
-__eirine__ is a flat-file, nodejs-based Content Management System (CMS) that is developed and maintained as open-source project. I have chosen Express.js in TypeScript as development framework to make __eirene__ lightning fast.
+__eirine__ is a flat-file, nodejs-based Content Management System (CMS) that is developed and maintained as open-source project. Powered by Express.js with TypeScript.
 
 ## Setup & start
 
