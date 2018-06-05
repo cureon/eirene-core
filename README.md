@@ -20,8 +20,19 @@ __eirine__ is a flat-file, nodejs-based Content Management System (CMS) that is 
 
 ## TODO:
 
-- Add example project
+- Update example project
 - Add user/roles & auth-extensions
 - Add futher template engines
 - Add JS bundler for frontend
-- Add admin-panel (maybe own repo)
+- Add admin-panel as Component (maybe own repo)
+- Setup npm package install method
+- Create repos for extensions
+
+## Add components
+
+- Add .hbs file to component folder
+- Optional add .ts file as controller (named like .hbs)
+- e.g `slider.hbs` /w `slider.ts`
+- Controller holds a class named `SliderComponent`
+- Controller class holds a function called `compile`
+- Controller is cunstructed with Express `req & res` and the data object given as include param
