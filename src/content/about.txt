@@ -1,4 +1,0 @@
-title:eirene CMS :: About
----
-text|markdown: # eirene  
-Is developed by André Kirchner 

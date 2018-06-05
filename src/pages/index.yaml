@@ -1,0 +1,10 @@
+meta:
+  baseComponent: html-index
+head:
+  title: eirene CMS | Core Example | Index
+  description: This is eirene
+body:
+  latestNews:
+    imageSRC: media/theme/eireneCMS.png
+    headline: Welcome to some lightweight software
+    text: Welcome to __eirene__

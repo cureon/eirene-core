@@ -1,0 +1,10 @@
+meta:
+  baseComponent: html-about
+head:
+  title: eirene CMS | Core Example | About
+  description: This is eirene
+body:
+  aboutText:
+    imageSRC: media/theme/eireneCMS.png
+    headline: But who made it?
+    text: eirene has been made by __André Kirchner__

@@ -1,7 +1,19 @@
 // Vendor
-@import '../../node_modules/bootstrap/scss/bootstrap'; 
+@import './node_modules/bootstrap/scss/bootstrap'; 
 
-// Main
+// Basics
+@import 'variables';
+
+// Main 
 body {
-    background: lightgreen;
+    color: $clr-black;
+    background: $clr-white;
+    text-align: center;
+}
+
+.main-navigation {
+    a {
+        display: inline-block;
+        padding: 10px 10px;
+    }
 }

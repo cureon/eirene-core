@@ -1,4 +1,0 @@
-title:eirene CMS :: Home
----
-text|markdown: # eirene  
-This is a __Content Management System__ 
