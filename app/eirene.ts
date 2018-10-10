@@ -12,19 +12,25 @@ import * as yaml from 'js-yaml';
 import * as Q from 'q';
 import * as bodyParser from 'body-parser';
 import * as sass from 'node-sass';
-const pascalCase = require('pascal-case');
-const promisedHandlebars = require('promised-handlebars');
+import * as typescript from 'typescript';
 
-const handlebars = promisedHandlebars(require('handlebars'), { 
+const pascalCase = require('pascal-case');
+const prmsHBars  = require('promised-handlebars');
+const ncp        = require('ncp').ncp;
+const minify     = require('minify');
+
+const handlebars = prmsHBars(require('handlebars'), { 
     Promise: Q.Promise
 });
 
 // Prerequisites
+const PORT       = 30100;
 let Global: any  = {};
 let Modules: any = {};
 let Routes: any  = {};
 
 // Folders
+const compDir: string          = __dirname + '/_compiled';
 const assetDir: string         = __dirname + '/assets';
 const contentDir: string       = __dirname + '/content';
 const globalContentDir: string = __dirname + '/content/_global';
@@ -38,10 +44,9 @@ const context: any = {
 }
 
 // Config
-app.use(express.static(assetDir)); 
+app.use(express.static(compDir)); 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-const templateStartPoint = 'app';
 
 /**
  * Function will provide forEach async
@@ -232,20 +237,58 @@ function prepareTemplateEngine() {
 }
 
 /**
+ * COPY VENDOR ASSETS
+ * Function will copy any vendor assets to static folder
+ */
+async function copyVendor() {
+    ncp.limit = 16;
+    ncp(assetDir + '/vendor', compDir + '/vendor', () => {});
+}
+
+/**
+ * COPY MEDIA ASSETS
+ * Function will copy any media assets to static folder
+ */
+async function copyMedia() {
+    ncp.limit = 16;
+    ncp(assetDir + '/media', compDir + '/media', () => {});
+}
+
+/**
  * RENDER CSS
  * Function will render the CSS from given SASS
- 
+ */
 async function renderCSS() {
-    const result = await sass.render({
-        file       : styleFolder + '/main.scss',
-        outFile    : cssFolder + '/main.css',
+    await sass.render({
+        file       : assetDir + '/styles/main.scss',
+        outFile    : compDir + '/styles/main.css',
         outputStyle: 'compressed'
-    }, (err, result) => {
+    }, (err: any, result: any) => {
         if(!err) {
-            fs.writeFileSync(cssFolder + '/main.css', result.css, 'utf8');
+            fs.writeFileSync(compDir + '/styles/main.css', result.css, 'utf8');
         }
     });
-}*/
+}
+
+/**
+ * RENDER TS
+ * Function will render the Frontend TS to JavaScript
+ */
+async function renderTS() {
+    const content         = fs.readFileSync(assetDir + '/scripts/main.ts', 'utf8');
+    const compilerOptions = { module: typescript.ModuleKind.System };
+
+    // Process
+    const transpiled = typescript.transpile(content, compilerOptions, undefined, undefined, 'main');
+    fs.writeFileSync(compDir + '/scripts/main.js', transpiled, 'utf8');
+
+    // Minify
+    await minify(compDir + '/scripts/main.js', (err: any, minified: any) => {
+        if(!err) {
+            fs.writeFileSync(compDir + '/scripts/main.js', minified, 'utf8');
+        }
+    });
+}
 
 /**
  * RUN APPLICATION
@@ -253,26 +296,35 @@ async function renderCSS() {
  */
 async function run() {
     console.log('--- eirene CMS v0.2 ---');
-    console.log('[SERVER] Application started ...');
+    console.log('[eirene] Initialization started ...');
 
-    // Prerequisites
-    console.log('[SERVER] Compiling CSS ...');
-    // await renderCSS();
+    // Assets
+    console.log('[eirene] Copying Assets ...');
+    await copyVendor();
+    await copyMedia();
+
+    // Asset Compilation
+    console.log('[eirene] Compiling CSS/TS ...');
+    await renderCSS();
+    await renderTS();
+
+    // Template Engine
+    console.log('[eirene] Registering Template Engine ...');
     prepareTemplateEngine();
     
     // Load Modules & Routes
-    console.log('[SERVER] Loading Modules & Content ...');
+    console.log('[eirene] Loading Modules & Content ...');
     Global  = await prepareGlobalContent();
     Modules = await moduleLoader(moduleDir);
     Routes  = await contentLoader(contentDir);
 
     // Register Routes
-    console.log('[SERVER] Registering Routes ...');
+    console.log('[eirene] Registering Routes ...');
     await registerRoutes();
 
     // Open Server
-    app.listen(30100, () => {
-        console.log('[SERVER] Application running on port 30100');
+    app.listen(PORT, () => {
+        console.log('[eirene] Application running on port ' + PORT + ' ...');
     });
 }
 

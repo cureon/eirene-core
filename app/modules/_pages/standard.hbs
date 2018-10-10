@@ -9,9 +9,11 @@
         <meta name="description" content="{{meta.description}}" />
     
         <!-- CSS -->
-        <link rel="stylesheet" type="text/css" href="css/main.css">
+        <link rel="stylesheet" type="text/css" href="styles/main.css">
     </head>
     <body>
+        <img src="media/theme/eireneCMS.png" />
+
         {{#if global.header}}
             <header>
                 <h2>{{global.header.title}}</h2>
@@ -53,5 +55,14 @@
                 </div>
             </footer>
         {{/if}}
+
+        
+        <script src="vendor/System/system.js"></script>
+        <script src="scripts/main.js"></script>
+        <script>
+        System.import('main').then(function(module) {
+            var APP = new module.Application();
+        });
+        </script>
     </body>
 </html>

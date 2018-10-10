@@ -17,10 +17,13 @@
     "handlebars": "^4.0.11",
     "js-yaml": "^3.11.0",
     "markdown-it": "^8.4.1",
-    "node-sass": "^4.9.0",
+    "minify": "^3.0.5",
+    "ncp": "^2.0.0",
+    "node-sass": "^4.9.3",
     "pascal-case": "^2.0.1",
     "promised-handlebars": "^2.0.1",
     "q": "^1.5.1",
+    "typescript": "^2.8.3",
     "web-request": "^1.0.7"
   },
   "devDependencies": {
@@ -30,12 +33,12 @@
     "@types/handlebars": "^4.0.37",
     "@types/js-yaml": "^3.11.1",
     "@types/markdown-it": "0.0.4",
+    "@types/ncp": "^2.0.1",
     "@types/node": "^7.0.5",
     "@types/node-sass": "^3.10.32",
     "@types/pascal-case": "^1.1.2",
     "@types/q": "^1.5.0",
     "nodemon": "^1.17.4",
-    "ts-node": "^6.0.3",
-    "typescript": "^2.8.3"
+    "ts-node": "^6.0.3"
   }
 }
