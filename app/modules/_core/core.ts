@@ -1,5 +1,5 @@
 /**
- * EIRENE :: Content Management System
+ * eirene :: Content Management System
  * -----------------------------------
  * Copyright (c) 2018 CUREON
  * @License MIT

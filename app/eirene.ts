@@ -1,5 +1,5 @@
 /**
- * EIRENE :: Content Management System
+ * eirene :: Content Management System
  * -----------------------------------
  * Copyright (c) 2018 CUREON
  * @License MIT
@@ -248,7 +248,7 @@ async function renderCSS() {
  * Function will run the server
  */
 async function run() {
-    console.log('--- EIRENE CMS v0.2 ---');
+    console.log('--- eirene CMS v0.2 ---');
     console.log('[SERVER] Application started ...');
 
     // Prerequisites
