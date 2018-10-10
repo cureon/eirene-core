@@ -178,15 +178,19 @@ async function renderTemplate(moduleName: string, data: any) {
 
     data = data || {};
 
+    // Propagate Data to Partials
     if (Global) {
         data.global = Global;
+    }
+    if (Routes) {
+        data.routes = Routes;
     }
 
     // Render partial or fallback (if module is missing)
     if(handlebars.partials[moduleName]) {
         template = await handlebars.compile(handlebars.partials[moduleName], {noEscape:true});
-        compData = await assignController(moduleName, data);  
-        html     = await template(data);
+        compData = await assignController(moduleName, data);
+        html     = await template(compData);
     } else {
         template = await handlebars.compile(handlebars.partials['_missingModule'], {noEscape:true});
         html     = await template({data: {missingModule: moduleName}});

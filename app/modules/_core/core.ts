@@ -22,7 +22,6 @@ export class CoreModule {
      * Compile
      */
     async compile() {
-        console.log('APP IS RUNNING');
         return this.data; 
     }
 }
