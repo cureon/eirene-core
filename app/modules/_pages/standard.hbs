@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <base href="/">
+        <title>{{meta.title}}</title>
+        
+        <!-- Meta -->
+        <meta charset="utf-8">
+        <meta name="robots" content="index,follow">
+        <meta name="description" content="{{meta.description}}" />
+    
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="css/main.css">
+    </head>
+    <body>
+        {{#if global.header}}
+            <header>
+                <h2>{{global.header.title}}</h2>
+                    {{#each global.header.content}}
+                        {{include this.module this.data}}
+                    {{/each}}
+                </div>
+            </header>
+        {{/if}}
+
+        {{#if left}}
+            <div class="left{{#if left.class}} {{left.class}}{{/if}}">
+                {{#each left.content}}
+                    {{include this.module this.data}}
+                {{/each}}
+            </div>
+        {{/if}}
+        
+        {{#if main}}
+            <div class="main{{#if main.class}} {{main.class}}{{/if}}">
+                {{#each main.content}}
+                    {{include this.module this.data}}
+                {{/each}}
+            </div>
+        {{/if}}
+
+        {{#if right}}
+            <div class="right{{#if right.class}} {{right.class}}{{/if}}">
+                {{#each right.content}}
+                    {{include this.module this.data}}
+                {{/each}}
+            </div>
+        {{/if}}
+
+        {{#if global.footer}}
+            <footer>
+                <div class="about">
+                    {{global.footer.about}}
+                </div>
+            </footer>
+        {{/if}}
+    </body>
+</html>

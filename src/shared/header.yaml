@@ -1,6 +1,0 @@
-header:
-  navigationMain:
-    - href: ../
-      label: Home
-    - href: /about
-      label: About

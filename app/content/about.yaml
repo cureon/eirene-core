@@ -1,5 +1,5 @@
-meta:
-  baseComponent: html-about
+settings:
+  template: standard
 head:
   title: eirene CMS | Core Example | About
   description: This is eirene

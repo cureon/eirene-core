@@ -1,9 +1,15 @@
+/**
+ * EIRENE :: Content Management System
+ * -----------------------------------
+ * Copyright (c) 2018 CUREON
+ * @License MIT
+ */
+
 // Module Imports
 import * as express from 'express';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as Q from 'q';
-import * as handlebarsExpress from 'express-handlebars';
 import * as bodyParser from 'body-parser';
 import * as sass from 'node-sass';
 const pascalCase = require('pascal-case');
@@ -14,16 +20,15 @@ const handlebars = promisedHandlebars(require('handlebars'), {
 });
 
 // Prerequisites
-let Components: any = {};
-let Routes: any     = {};
+let Global: any  = {};
+let Modules: any = {};
+let Routes: any  = {};
 
 // Folders
-const staticFolder: string    = __dirname + '/static';
-const pageFolder: string      = __dirname + '/pages';
-const sharedFolder: string    = __dirname + '/shared';
-const componentFolder: string = __dirname + '/components';
-const styleFolder: string     = __dirname + '/styles';
-const cssFolder: string       = staticFolder + '/css';
+const assetDir: string         = __dirname + '/assets';
+const contentDir: string       = __dirname + '/content';
+const globalContentDir: string = __dirname + '/content/_global';
+const moduleDir: string        = __dirname + '/modules';
 
 // Instantiate
 const app          = express();
@@ -33,7 +38,7 @@ const context: any = {
 }
 
 // Config
-app.use(express.static(staticFolder)); 
+app.use(express.static(assetDir)); 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 const templateStartPoint = 'app';
@@ -54,15 +59,15 @@ async function asyncForEach(array: any, callback: any) {
  * Function will load content files from _shared folder
  * and append them in order to create a larger yaml
  */
-async function prepareSharedContent() {
-    const files      = fs.readdirSync(sharedFolder);
+async function prepareGlobalContent() {
+    const files      = fs.readdirSync(globalContentDir);
     let combinedYAML = '';
 
     await asyncForEach(files, async (file: string) => {
-        combinedYAML += fs.readFileSync(sharedFolder + '/'+ file, 'utf8') + '\n';
+        combinedYAML += fs.readFileSync(globalContentDir + '/'+ file, 'utf8') + '\n';
     });
 
-    return combinedYAML;
+    return yaml.safeLoad(combinedYAML);
 }
 
 /**
@@ -79,8 +84,15 @@ async function contentLoader(initialDir: string, currentDir: string = '', routeL
 
     // Run through files of current directory
     await asyncForEach(files, async (file: string) => {
+        // Don't process global content
+        if (file === '_global') {
+            return;
+        }
+
+        // Process regular files & folders
         if (fs.statSync(currentDir + '/' + file).isDirectory()) {
             routeList = contentLoader(initialDir, currentDir + '/' + file + '/', routeList);
+            
         } else {            
             // Write Route List
             const routeName = file.replace(/\.[^/.]+$/, '');
@@ -91,8 +103,7 @@ async function contentLoader(initialDir: string, currentDir: string = '', routeL
             }
 
             // Return /w Content
-            const sharedContent  = await prepareSharedContent();
-            routeList[routePath] = yaml.safeLoad(fs.readFileSync(currentDir + '/'+ file, 'utf8') + '\n' + sharedContent);
+            routeList[routePath] = yaml.safeLoad(fs.readFileSync(currentDir + '/'+ file, 'utf8'));
         }
     });
     return routeList;
@@ -100,50 +111,51 @@ async function contentLoader(initialDir: string, currentDir: string = '', routeL
 
 /**
  * COMPONENT LOADER
- * Function will scan a dir for components and register templates
+ * Function will scan a dir for modules and register templates
  * as well as corresponding controllers
  * @param currentDir 
- * @param componentList 
+ * @param moduleList 
  */
-async function componentLoader(currentDir: string, componentList: any = {}) {
+async function moduleLoader(currentDir: string, moduleList: any = {}) {
     const files = fs.readdirSync(currentDir);
 
     // Run through files of current directory
     await asyncForEach(files, async (file: string) => {
         if (fs.statSync(currentDir + '/' + file).isDirectory()) {
-            componentList = await componentLoader(currentDir + '/' + file, componentList);
+            moduleList = await moduleLoader(currentDir + '/' + file, moduleList);
         } else {            
-            const [componentName, extension] = file.split('.');
+            const [moduleName, extension] = file.split('.');
 
             // Register templates
             if(extension == 'hbs') {
-                handlebars.registerPartial(componentName, fs.readFileSync(currentDir + '/' + file, 'utf8'));
+                handlebars.registerPartial(moduleName, fs.readFileSync(currentDir + '/' + file, 'utf8'));
             }
 
             // Register controllers
             if(extension == 'ts') {
                 const moduleImport = await import(currentDir + '/' + file);
-                componentList[componentName] = moduleImport;
+                moduleList[moduleName] = moduleImport;
             }
         }
     });
 
-    return await componentList;
+    return await moduleList;
 };
 
 /**
  * ASSIGN CONTROLLER
- * Function will assign a controller to a component in order
- * to compile the data the component needs to provide to the UI
- * @param componentName 
+ * Function will assign a controller to a module in order
+ * to compile the data the module needs to provide to the UI
+ * @param moduleName 
  * @param data 
  */
-async function assignController(componentName: any, data: any) {
-    const moduleName = pascalCase(componentName + ' Component'); 
+async function assignController(moduleName: any, data: any) {
+    const moduleConstructor = pascalCase(moduleName + ' Module'); 
+
     data = data || {};
 
-    if(Components[componentName] && Components[componentName][moduleName]) {
-        const serviceInstance = new Components[componentName][moduleName](context.req, context.res, data);
+    if(Modules[moduleName] && Modules[moduleName][moduleConstructor]) {
+        const serviceInstance = new Modules[moduleName][moduleConstructor](context.req, context.res, data);
         
         if(serviceInstance.compile && typeof serviceInstance.compile == 'function') {
             data = await serviceInstance.compile();
@@ -156,22 +168,28 @@ async function assignController(componentName: any, data: any) {
 /**
  * RENDER TEMPLATE
  * Function will render any given partial & data to HTML
- * @param componentName 
+ * @param moduleName 
  * @param context 
  */
-async function renderTemplate(componentName: string, data: any) { 
+async function renderTemplate(moduleName: string, data: any) { 
     let template:any;
     let html:any;
     let compData: any;
 
-    // Render partial or fallback (if component is missing)
-    if(handlebars.partials[componentName]) {
-        template = await handlebars.compile(handlebars.partials[componentName], {noEscape:true});
-        compData = await assignController(componentName, data);  
+    data = data || {};
+
+    if (Global) {
+        data.global = Global;
+    }
+
+    // Render partial or fallback (if module is missing)
+    if(handlebars.partials[moduleName]) {
+        template = await handlebars.compile(handlebars.partials[moduleName], {noEscape:true});
+        compData = await assignController(moduleName, data);  
         html     = await template(data);
     } else {
-        template = await handlebars.compile(handlebars.partials['_missingComponent'], {noEscape:true});
-        html     = await template({data: {missingComponent: componentName}});
+        template = await handlebars.compile(handlebars.partials['_missingModule'], {noEscape:true});
+        html     = await template({data: {missingModule: moduleName}});
     }
 
     return new handlebars.SafeString(html).toHTML();
@@ -190,9 +208,12 @@ async function registerRoutes() {
             context.req      = req;
             context.res      = res;
             const objClone   = JSON.parse(JSON.stringify(objContent));
-            const rndContent = await renderTemplate(templateStartPoint, objClone);
 
-            res.send(rndContent);
+            if(objClone.settings && objClone.settings.template) {
+                const rndContent = await renderTemplate('core', objClone);
+
+                res.send(rndContent);
+            }
         });
     });
 }
@@ -202,15 +223,14 @@ async function registerRoutes() {
  * Function will prepare the template engine
  */
 function prepareTemplateEngine() {
-    //handlebars.registerPartial('_childLoader', '{{#if children}}{{#each children}}{{include this.type this}}{{/each}}{{/if}}');
-    handlebars.registerPartial('_missingComponent', '<br><span style="color: red;">Component "{{data.missingComponent}}" cannot be found!</span>');
+    handlebars.registerPartial('_missingModule', '<br><span style="color: red;">Module "{{data.missingModule}}" cannot be found!</span>');
     handlebars.registerHelper('include', renderTemplate);
 }
 
 /**
  * RENDER CSS
  * Function will render the CSS from given SASS
- */
+ 
 async function renderCSS() {
     const result = await sass.render({
         file       : styleFolder + '/main.scss',
@@ -221,7 +241,7 @@ async function renderCSS() {
             fs.writeFileSync(cssFolder + '/main.css', result.css, 'utf8');
         }
     });
-}
+}*/
 
 /**
  * RUN APPLICATION
@@ -233,21 +253,22 @@ async function run() {
 
     // Prerequisites
     console.log('[SERVER] Compiling CSS ...');
-    await renderCSS();
+    // await renderCSS();
     prepareTemplateEngine();
     
-    // Load Components & Routes
-    console.log('[SERVER] Loading Components & Content ...');
-    Components = await componentLoader(componentFolder);
-    Routes     = await contentLoader(pageFolder);
+    // Load Modules & Routes
+    console.log('[SERVER] Loading Modules & Content ...');
+    Global  = await prepareGlobalContent();
+    Modules = await moduleLoader(moduleDir);
+    Routes  = await contentLoader(contentDir);
 
     // Register Routes
     console.log('[SERVER] Registering Routes ...');
     await registerRoutes();
 
     // Open Server
-    app.listen(3000, () => {
-        console.log('[SERVER] Application running on port 3000');
+    app.listen(30100, () => {
+        console.log('[SERVER] Application running on port 30100');
     });
 }
 

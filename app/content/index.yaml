@@ -1,0 +1,16 @@
+settings:
+  template: standard
+meta:
+  title: eirene CMS | Core Example | Index
+  description: This is eirene
+main:
+  class: content
+  content:
+    - module: article
+      data:
+        title: Hallo Eirene
+        text: Die Welt ist gut
+    - module: article
+      data:
+        title: Hallo Eirene
+        text: Die Welt ist gut

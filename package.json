@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "eirene": "nodemon --watch 'src/**/*' -e ts,tsx,hbs,scss,yaml --exec 'ts-node ./src/eirene.ts'"
+    "eirene": "nodemon --watch 'app/**/*' -e ts,tsx,hbs,scss,yaml --exec 'ts-node ./app/eirene.ts'"
   },
   "author": "André Kirchner <andre.kirchner@cureon.de>",
   "license": "MIT",

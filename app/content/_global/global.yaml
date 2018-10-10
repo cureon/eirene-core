@@ -1,0 +1,6 @@
+header:
+  title: Amazing
+  content:
+    - module: navigation     
+footer:
+  about: Copyright &copy; André Kirchner

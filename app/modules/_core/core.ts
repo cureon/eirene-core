@@ -1,7 +1,14 @@
 /**
- * AppComponent
+ * EIRENE :: Content Management System
+ * -----------------------------------
+ * Copyright (c) 2018 CUREON
+ * @License MIT
  */
-export class AppComponent {
+
+/**
+ * CoreModule
+ */
+export class CoreModule {
     /**
      * Constructor
      */
