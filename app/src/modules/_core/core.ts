@@ -16,7 +16,7 @@ export class CoreModule {
         private req: any,
         private res: any,
         private data: any = {}
-    ) {}
+    ) { }
 
     /**
      * Compile
