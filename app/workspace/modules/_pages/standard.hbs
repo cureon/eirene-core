@@ -9,10 +9,10 @@
         <meta name="description" content="{{meta.description}}" />
     
         <!-- CSS -->
-        <link rel="stylesheet" type="text/css" href="styles/main.css">
+        <link rel="stylesheet" type="text/css" href="eirene-html/styles/main.css">
     </head>
     <body>
-        <img src="media/theme/eireneCMS.png" />
+        <img src="eirene-html/media/theme/eireneCMS.png" />
 
         {{#if global.header}}
             <header>
@@ -57,8 +57,8 @@
         {{/if}}
 
         
-        <script src="vendor/System/system.js"></script>
-        <script src="scripts/main.js"></script>
+        <script src="eirene-html/vendor/System/system.js"></script>
+        <script src="eirene-html/scripts/main.js"></script>
         <script>
         System.import('main').then(function(module) {
             var APP = new module.Application();

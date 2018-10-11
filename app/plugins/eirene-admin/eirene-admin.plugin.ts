@@ -21,12 +21,12 @@ const minify     = require('minify');
 const mkdirp     = require('mkdirp');
 
 /**
- * eirene :: Basic HTML Frontend
+ * eirene :: Admin Panel
  *
  * @export
- * @class EireneHTMLPlugin
+ * @class EireneAdminPlugin
  */
-export class EireneHTMLPlugin {
+export class EireneAdminPlugin {
     /**
      * Members
      */
@@ -49,11 +49,8 @@ export class EireneHTMLPlugin {
         
         // Folder Configuration
         this.DIRS = {
-            COMPILED    : __dirname + '/../../_compiled/eirene-html',
-            MODULES     : __dirname + '/../../workspace/modules',
-            ASSETS      : __dirname + '/../../workspace/assets',
-            CNT_PRIVATE : __dirname + '/../../workspace/content',
-            CNT_GLOBAL  : __dirname + '/../../workspace/content/_global'   
+            COMPILED    : __dirname + '/../../_compiled/eirene-admin',
+            ASSETS      : __dirname + '/assets' 
         }
 
         mkdirp(this.DIRS.COMPILED, function(err: any) { });
@@ -319,28 +316,28 @@ export class EireneHTMLPlugin {
      */
     async run() {
         // Assets
-        console.log('[eirene-html] Copying Assets ...');
+        console.log('[eirene-admin] Copying Assets ...');
         await this.copyVendor();
         await this.copyMedia();
 
         // Asset Compilation
-        console.log('[eirene-html] Compiling CSS/TS ...');
+        console.log('[eirene-admin] Compiling CSS/TS ...');
         await this.renderCSS();
         await this.renderTS();
 
         // Template Engine
-        console.log('[eirene-html] Registering Template Engine ...');
-        this.prepareTemplateEngine();
+        console.log('[eirene-admin] Registering Template Engine ...');
+        // this.prepareTemplateEngine();
         
-        // Load Modules & Routes
-        console.log('[eirene-html] Loading Modules & Content ...');
-        this.GLOBAL  = await this.prepareGlobalContent();
-        this.MODULES = await this.moduleLoader(this.DIRS.MODULES);
-        this.ROUTES  = await this.contentLoader(this.DIRS.CNT_PRIVATE);
+        // // Load Modules & Routes
+        // console.log('[eirene] Loading Modules & Content ...');
+        // this.GLOBAL  = await this.prepareGlobalContent();
+        // this.MODULES = await this.moduleLoader(this.DIRS.MODULES);
+        // this.ROUTES  = await this.contentLoader(this.DIRS.CNT_PRIVATE);
 
-        // Register Routes
-        console.log('[eirene-html] Registering Routes ...');
-        await this.registerRoutes();
+        // // Register Routes
+        // console.log('[eirene] Registering Routes ...');
+        // await this.registerRoutes();
     }
 
 }

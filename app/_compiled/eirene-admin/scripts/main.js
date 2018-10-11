@@ -1,0 +1,1 @@
+System.register("main",[],function(e,t){t&&t.id;return{setters:[],execute:function(){console.log("HALLO WELT")}}});
