@@ -12,8 +12,7 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 
 // Plugin Imports
-import { EireneHTMLPlugin } from './plugins/eirene-html/eirene-html.plugin';
-import { EireneAdminPlugin } from './plugins/eirene-admin/eirene-admin.plugin';
+import { EireneFrontendPlugin } from './_plugins/eirene-frontend/eirene-frontend.plugin';
 
 class Eirene {
     /**
@@ -24,7 +23,7 @@ class Eirene {
     /**
      * Constructor
      */
-    constructor(private port: number) { 
+    constructor(private port: number) {
         // Register Express App
         this.xprApp = express();
         this.xprApp.use(bodyParser.urlencoded({ extended: false }));
@@ -40,16 +39,14 @@ class Eirene {
      */
     async run() {
         // Load Plugins
-        const eireneHTML  = new EireneHTMLPlugin(this.xprApp);
-        const eireneAdmin = new EireneAdminPlugin(this.xprApp);
-        
+        const eireneFrontend = new EireneFrontendPlugin(this.xprApp);
+
         // Start
         console.log('--- eirene CMS v0.2 ---');
         console.log('[eirene-core] Initialization started ...');
 
         // Run Plugins
-        await eireneHTML.run();
-        await eireneAdmin.run();        
+        await eireneFrontend.runPlugin();
 
         // Open Server
         this.xprApp.listen(this.port, () => {

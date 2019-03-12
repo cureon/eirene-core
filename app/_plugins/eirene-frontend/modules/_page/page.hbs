@@ -1,0 +1,11 @@
+<html>
+  <head>
+    <title>{{this.title}}</title>
+    <meta name="description" content="{{this.desc}}" />
+  </head>
+  <body>
+  {{#each children}}
+    {{include this.type this}}
+  {{/each}}
+  </body>
+</html>

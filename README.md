@@ -20,6 +20,7 @@ __eirine__ is a flat-file, nodejs-based Content Management System (CMS) that is 
 
 ## TODO:
 
+- Global/Shared Content
 - Update example project
 - Add user/roles & auth-extensions
 - Add futher template engines

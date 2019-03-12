@@ -1,0 +1,8 @@
+page:
+  title: Hello World
+  desc: This is a description
+  children:
+    - type: header
+      content: Header Content
+    - type: footer
+      content: Footer COntent
